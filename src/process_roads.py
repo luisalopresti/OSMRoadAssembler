@@ -25,6 +25,22 @@ def correct_datatypes(df, columns_tocheck):
         df[col] = df[col].apply(check_datatype)
 
 
+def process_maxspeed(value):
+    '''
+    Apply get_num function to maxspeed column,
+    to extract maxspeed number when it is encoded within a string
+    (e.g., '30 mph').
+    '''
+    if isinstance(value, str):
+        return get_num(value)
+    elif isinstance(value, list):
+        return [get_num(item) for item in value]
+    elif pd.isna(value):
+        return np.nan
+    else:
+        return value
+    
+
 def process_list_values(edges_df, 
                         tunnel_true_values = ['yes', 'building_passage'], # ref. taginfo.openstreetmap.org/keys/tunnel
                         bridge_true_values = ['yes', 'movable', 'viaduct', 'aqueduct']): # ref. taginfo.openstreetmap.org/keys/bridge
@@ -44,9 +60,13 @@ def process_list_values(edges_df,
     edges_df.drop(columns=['lanes'], inplace=True)
 
     # maxspeed
-    ## after correction datatype, should only be numeric: remove mapping errors 
-    ## (e.g., in Hamburg, maxspeed assumes values "signals" and "walk")
+    ## after correction datatype, should only be numeric: exceptions are string containing number+mph & mapping errors
+    ## info: https://taginfo.openstreetmap.org/keys/maxspeed
+    ## 1. remove mph & transform to numeric (e.g., instead of 30, the value is '30 mph')
+    edges_df['maxspeed'] = edges_df['maxspeed'].apply(process_maxspeed)
+    ## 2. remove mapping errors (e.g., in Hamburg, maxspeed assumes values "signals" and "walk")
     edges_df['maxspeed'] = edges_df['maxspeed'].apply(lambda x: [i for i in x if not isinstance(i, str)] if isinstance(x, list) else float('nan') if isinstance(x, str) else x)
+    ## apply function to get min and max maxspeed value in that road-block
     edges_df[['max_maxspeed', 'min_maxspeed']] = edges_df['maxspeed'].apply(lambda x: pd.Series(get_max_min(x)))
     edges_df.drop(columns=['maxspeed'], inplace=True)
 

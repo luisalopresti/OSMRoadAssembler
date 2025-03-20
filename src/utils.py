@@ -43,6 +43,17 @@ def check_multiple_types(column):
     return len(unique_types) > 1, unique_types
 
 
+def get_num(text):
+    '''Extract number (without sign) from string.'''
+    numbers = [int(word) for word in text.split() if word.isdigit()]
+    if len(numbers) > 1:
+        return numbers
+    elif len(numbers) == 1:
+        return numbers[0]
+    else:
+        return np.nan
+    
+    
 def get_max_min(lanes_value):
     '''Get the min and the max value of an attribute;
     when the attribute is an int, min and max value will be the same and equal to that int,
