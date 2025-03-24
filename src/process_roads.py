@@ -34,7 +34,7 @@ def process_maxspeed(value):
     if isinstance(value, str):
         return get_num(value)
     elif isinstance(value, list):
-        return [get_num(item) for item in value]
+        return [process_maxspeed(item) for item in value]
     elif pd.isna(value):
         return np.nan
     else:
