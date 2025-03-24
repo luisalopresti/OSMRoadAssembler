@@ -101,7 +101,7 @@ def aggregate_segments_info(gdf, grp_by_col = 'geometry'):
     if 'standardized_name' in gdf.columns:
         aggregation_dict['standardized_name'] = str_list_aggregation
     
-    return gdf.groupby(grp_by_col).agg(aggregation_dict) 
+    return gdf.groupby(grp_by_col, sort=False).agg(aggregation_dict) 
     
 
 # --------------------------------------------------------
@@ -196,7 +196,7 @@ def merge_equal_name_sets(multiple_names_edges, verbose = True):
         print('Unique sets:', len(Counter(multiple_names_edges.standardized_name).keys()))
         print('Total occurrences:', len(multiple_names_edges))
         
-    grouped = multiple_names_edges.groupby('standardized_name')
+    grouped = multiple_names_edges.groupby('standardized_name', sort=False)
 
     ## linemerge geometries having same set of names (all names in the set are the same)
     # perform linemerge for geometries within each group (if multiple element)
@@ -256,7 +256,7 @@ def merge_segments_with_multiple_names(lst_names_df, verbose = True):
 
 
 def merge_segments_with_single_name(str_names_df, verbose = True):
-    grp = str_names_df.groupby('standardized_name')
+    grp = str_names_df.groupby('standardized_name', sort=False)
     merged_geometries = []
     for name, group in grp:
         # if multiple segments with the same name (in the same grp)
