@@ -476,7 +476,7 @@ def merge_segments(edges_df,
 
     if verbose:
         print(f'Reduction in number of geometries after recursion: from {len(final_edges)} to {len(final_edges_opt)}')
-        print(f'Overall reduction: from {len(edges_df)} in the original dataset, to {len(final_edges_opt)}.')
+        print(f'Overall reduction performed by merge_segments: from {len(edges_df)} in the original dataset, to {len(final_edges_opt)}.')
 
     # update geometry length
     final_edges_opt['length'] = final_edges_opt.geometry.to_crs(crs_metric).length
